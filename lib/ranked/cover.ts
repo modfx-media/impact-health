@@ -328,7 +328,8 @@ export function ensureUniqueCoverImages<
   const used = new Set<string>();
   return posts.map((post) => {
     let cover = post.coverImage;
-    if (!cover || used.has(cover)) {
+    const isLocalFile = cover.startsWith("/");
+    if (!cover || (used.has(cover) && !isLocalFile)) {
       cover = uniqueWebCoverUrl(post.slug, used, post.title ?? "");
     }
     used.add(cover);

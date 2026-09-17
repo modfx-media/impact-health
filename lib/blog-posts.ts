@@ -42,6 +42,8 @@ export interface BlogPost {
   date: string;
   dateModified: string;
   category: BlogCategory;
+  /** Visible article H1 when it differs from the SEO `title`. */
+  h1?: string;
 }
 
 /** Formats an ISO `YYYY-MM-DD` date string as e.g. "December 16, 2024". */
@@ -264,6 +266,19 @@ export const blogPosts: BlogPost[] = [
     date: "2023-11-04",
     dateModified: "2025-04-21",
     category: "Hormone & Anti-Aging",
+  },
+  {
+    slug: "laser-therapy-options-for-joint-pain-in-westerville",
+    title: "Laser Therapy Options for Joint Pain in Westerville",
+    description:
+      "Learn how laser therapy in Westerville, OH may help ease joint pain, support healing, and improve mobility with noninvasive, drug free care",
+    image: "/images/blog/laser-therapy-options-for-joint-pain-in-westerville.jpeg",
+    imageAlt:
+      "Woman sitting on a park bench holding her knee in discomfort from joint pain",
+    date: "2026-09-17",
+    dateModified: "2026-09-17",
+    category: "Arthritis & Joint Pain",
+    h1: "Discover How Laser Therapy Eases Joint Pain Fast",
   },
   {
     slug: "neuropathy-treatment-in-westerville-lifestyle-habits-that-affect-results",

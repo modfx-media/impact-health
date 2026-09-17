@@ -47,6 +47,7 @@ import { WhyYourSpringJointPainNeedsArthritisTreatmentSupportContent } from "@/c
 import { UnderstandingNeuropathyTreatmentOptionsInWestervilleContent } from "@/components/blog/content/understanding-neuropathy-treatment-options-in-westerville";
 import { IsShockwaveTherapyTheMissingStepInYourSportsInjuryRecoveryContent } from "@/components/blog/content/is-shockwave-therapy-the-missing-step-in-your-sports-injury-recovery";
 import { WhenPersistentHipPainDemandsSpecialistTreatmentContent } from "@/components/blog/content/when-persistent-hip-pain-demands-specialist-treatment";
+import { LaserTherapyOptionsForJointPainInWestervilleContent } from "@/components/blog/content/laser-therapy-options-for-joint-pain-in-westerville";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -91,6 +92,7 @@ const contentBySlug: Record<string, ReactNode[]> = {
   "understanding-neuropathy-treatment-options-in-westerville": UnderstandingNeuropathyTreatmentOptionsInWestervilleContent,
   "is-shockwave-therapy-the-missing-step-in-your-sports-injury-recovery": IsShockwaveTherapyTheMissingStepInYourSportsInjuryRecoveryContent,
   "when-persistent-hip-pain-demands-specialist-treatment": WhenPersistentHipPainDemandsSpecialistTreatmentContent,
+  "laser-therapy-options-for-joint-pain-in-westerville": LaserTherapyOptionsForJointPainInWestervilleContent,
 };
 
 export async function generateStaticParams() {
@@ -150,11 +152,11 @@ export default async function BlogPostPage({
   if (local && compiled) {
     const schema = blogPostSchemas[slug];
     const date = published?.publishDate ?? local.date;
-    const cover = published?.coverImage ?? local.image;
-    const coverAlt = published?.coverAlt ?? local.imageAlt;
+    const cover = local.image;
+    const coverAlt = local.imageAlt;
     return (
       <PageLayout
-        title={local.title}
+        title={local.h1 ?? local.title}
         eyebrow="Blog"
         intro={local.description}
         image={{ src: cover, alt: coverAlt }}
