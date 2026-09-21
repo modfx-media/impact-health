@@ -105,11 +105,10 @@ export const staffMembers: StaffMember[] = [
   },
   {
     slug: "morgan-steiskal-fnp-c",
-    name: "Morgan Steiskal, FNP-C",
+    name: "Morgan Steiskal, APRN, FNP-C",
     role: "Nurse Practitioner",
     blurb: "Internal Medicine & Weight Loss Specialist",
-    // Placeholder headshot — real photo coming soon.
-    image: "/images/staff/placeholder-headshot.jpg",
+    image: "/images/staff/morgan-steiskal-fnp-c.jpg",
     pageTitle: "Morgan Steiskal, FNP-C: Internal Medicine in Westerville, OH",
     metaDescription:
       "Meet Morgan Steiskal, FNP-C at Impact Health & Wellness in Westerville, OH. Experience expert care in internal medicine, weight loss, and hormone therapy. Book your visit!",
