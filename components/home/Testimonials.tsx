@@ -1,26 +1,7 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/home/SectionHeading";
-import { contactInfo } from "@/lib/nav-data";
-
-const testimonials = [
-  {
-    quote:
-      "I feel so much gratitude that I have been able to visit this doctor, staff, and facility! I am planning to continue care with treatments because they have cared for and helped me during a stressful event in my life. Thanks.",
-    name: "Kimberly",
-  },
-  { quote: "Always exceptional service.", name: "Anita" },
-  { quote: "Excellent staff and experience.", name: "John" },
-  {
-    quote:
-      "Love my counselor… she gives a lot of support and good ideas! I feel like she understands and cares!",
-    name: "Marti",
-  },
-  {
-    quote:
-      "Everyone at Impact is friendly and welcoming. Kim at the front desk is extremely friendly and helpful. Mary is always caring and supportive.",
-    name: "Joan",
-  },
-];
+import { getDisplayedGoogleReviews } from "@/lib/google-reviews";
+import type { GoogleReview, GoogleReviewsMeta } from "@/lib/reviews";
 
 function GoogleG(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -45,9 +26,9 @@ function GoogleG(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function Stars() {
+function Stars({ label }: { label: string }) {
   return (
-    <div className="flex gap-1 text-amber-400" aria-label="5 out of 5 stars">
+    <div className="flex gap-1 text-amber-400" aria-label={label}>
       {Array.from({ length: 5 }).map((_, s) => (
         <svg key={s} width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1.99 5.79L10 14.77l-5.2 2.73.99-5.79L1.58 7.62l5.82-.85L10 1.5z" />
@@ -57,7 +38,19 @@ function Stars() {
   );
 }
 
-export function Testimonials() {
+export interface TestimonialsViewProps {
+  /** Already filtered to 5-star reviews with text and a name. */
+  items: GoogleReview[];
+  meta: GoogleReviewsMeta;
+}
+
+/**
+ * Presentational half. `items` must already be 5-star only — this renders five
+ * stars on every card and does not re-check the rating.
+ */
+export function TestimonialsView({ items, meta }: TestimonialsViewProps) {
+  if (items.length === 0) return null;
+
   return (
     <section className="relative overflow-hidden bg-[#f4f8fb] py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -70,16 +63,18 @@ export function Testimonials() {
             />
             <div className="mt-5 inline-flex items-center gap-2.5 rounded-full border border-brand-navy/10 bg-white px-4 py-2 shadow-sm">
               <GoogleG className="h-5 w-5 shrink-0" />
-              <Stars />
+              <Stars
+                label={`Rated ${meta.rating} out of 5 on Google from ${meta.reviewCount} reviews`}
+              />
               <span className="text-sm font-semibold text-brand-navy">
-                Loved by our patients
+                {meta.rating} from {meta.reviewCount} Google reviews
               </span>
             </div>
           </Reveal>
 
           <Reveal delay={0.1}>
             <a
-              href={contactInfo.mapsUrl}
+              href={meta.reviewsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-teal transition-colors hover:text-brand-navy"
@@ -91,25 +86,29 @@ export function Testimonials() {
         </div>
 
         <div className="no-scrollbar mt-10 -mx-6 flex snap-x snap-proximity gap-5 overflow-x-auto px-6 pb-4 sm:mx-0 sm:px-0">
-          {testimonials.map((testimonial, i) => (
+          {items.map((review, i) => (
             <Reveal
-              key={testimonial.name}
+              key={`${review.name}-${i}`}
               delay={(i + 1) * 0.06}
               className="w-[85%] shrink-0 snap-start sm:w-[320px]"
             >
               <figure className="flex h-full flex-col rounded-2xl border border-zinc-200/60 bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <Stars />
+                  <Stars label="5 out of 5 stars" />
                   <GoogleG className="h-5 w-5 shrink-0" />
                 </div>
                 <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-zinc-600">
-                  {testimonial.quote}
+                  <span className="line-clamp-[10]">{review.quote}</span>
                 </blockquote>
                 <figcaption className="mt-5 border-t border-zinc-100 pt-4">
                   <div className="text-sm font-semibold text-brand-navy">
-                    {testimonial.name}
+                    {review.name}
                   </div>
-                  <div className="text-xs text-zinc-400">Google review</div>
+                  <div className="text-xs text-zinc-400">
+                    {review.relativeTime
+                      ? `Google review · ${review.relativeTime}`
+                      : "Google review"}
+                  </div>
                 </figcaption>
               </figure>
             </Reveal>
@@ -118,4 +117,13 @@ export function Testimonials() {
       </div>
     </section>
   );
+}
+
+/**
+ * Self-fetching server wrapper so every existing `<Testimonials />` call site
+ * gets live Google data. `cache()` dedupes this to one request per render.
+ */
+export async function Testimonials() {
+  const { reviews, meta } = await getDisplayedGoogleReviews();
+  return <TestimonialsView items={reviews} meta={meta} />;
 }

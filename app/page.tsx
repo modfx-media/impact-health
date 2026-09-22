@@ -6,6 +6,10 @@ import { BlogPreview } from "@/components/home/BlogPreview";
 import { ServicesOverview } from "@/components/home/ServicesOverview";
 import { Conditions } from "@/components/home/Conditions";
 import { Testimonials } from "@/components/home/Testimonials";
+import {
+  getDisplayedGoogleReviews,
+  googleReviewSchema,
+} from "@/lib/google-reviews";
 import { MapOfficeHours } from "@/components/home/MapOfficeHours";
 import { ServiceArea } from "@/components/home/ServiceArea";
 
@@ -93,12 +97,24 @@ const jsonLd = {
   ],
 };
 
-export default function Home() {
+export default async function Home() {
+  // Same cached payload the testimonials section renders, so aggregateRating
+  // and review[] always match what is actually on the page.
+  const payload = await getDisplayedGoogleReviews();
+  const schema = {
+    ...jsonLd,
+    "@graph": jsonLd["@graph"].map((node) =>
+      node["@type"] === "Organization"
+        ? { ...node, ...googleReviewSchema(payload) }
+        : node,
+    ),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
       <main>
         <Hero />

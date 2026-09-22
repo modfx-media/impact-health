@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { PageLayout } from "@/components/page/PageLayout";
 import { Testimonials } from "@/components/home/Testimonials";
 import { contactInfo } from "@/lib/nav-data";
+import {
+  getDisplayedGoogleReviews,
+  googleReviewSchema,
+} from "@/lib/google-reviews";
 
 export const metadata: Metadata = {
   title: "Patient Testimonials | Impact Health & Wellness",
@@ -94,13 +98,20 @@ const schema = [
   },
 ];
 
-export default function PatientTestimonialsPage() {
+export default async function PatientTestimonialsPage() {
+  const payload = await getDisplayedGoogleReviews();
+  const schemaWithReviews = schema.map((node) =>
+    node["@type"] === "Organization"
+      ? { ...node, ...googleReviewSchema(payload) }
+      : node,
+  );
+
   return (
     <PageLayout
       title="Patient Testimonials"
       intro="Read firsthand accounts of how Impact Health & Wellness has positively influenced our patients' lives and well-being."
       breadcrumbs={[{ label: "Patient Testimonials" }]}
-      schema={schema}
+      schema={schemaWithReviews}
       showSidebar={false}
       afterContent={<Testimonials />}
     >
