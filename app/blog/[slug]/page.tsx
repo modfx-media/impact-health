@@ -48,6 +48,7 @@ import { UnderstandingNeuropathyTreatmentOptionsInWestervilleContent } from "@/c
 import { IsShockwaveTherapyTheMissingStepInYourSportsInjuryRecoveryContent } from "@/components/blog/content/is-shockwave-therapy-the-missing-step-in-your-sports-injury-recovery";
 import { WhenPersistentHipPainDemandsSpecialistTreatmentContent } from "@/components/blog/content/when-persistent-hip-pain-demands-specialist-treatment";
 import { LaserTherapyOptionsForJointPainInWestervilleContent } from "@/components/blog/content/laser-therapy-options-for-joint-pain-in-westerville";
+import { KneePainCareOptionsPtInjectionsOrSurgeryContent } from "@/components/blog/content/knee-pain-care-options-pt-injections-or-surgery";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -93,6 +94,7 @@ const contentBySlug: Record<string, ReactNode[]> = {
   "is-shockwave-therapy-the-missing-step-in-your-sports-injury-recovery": IsShockwaveTherapyTheMissingStepInYourSportsInjuryRecoveryContent,
   "when-persistent-hip-pain-demands-specialist-treatment": WhenPersistentHipPainDemandsSpecialistTreatmentContent,
   "laser-therapy-options-for-joint-pain-in-westerville": LaserTherapyOptionsForJointPainInWestervilleContent,
+  "knee-pain-care-options-pt-injections-or-surgery": KneePainCareOptionsPtInjectionsOrSurgeryContent,
 };
 
 export async function generateStaticParams() {

@@ -511,4 +511,16 @@ export const blogPosts: BlogPost[] = [
     dateModified: "2026-04-09",
     category: "Hip & Knee Pain",
   },
+  {
+    slug: "knee-pain-care-options-pt-injections-or-surgery",
+    title: "Knee Pain Care Options: PT, Injections, or Surgery",
+    description:
+      "Learn how to choose the right plan for knee pain treatment in Westerville, OH based on injury cause, activity goals, and recovery timeline",
+    image: "/images/blog/knee-pain-care-options-pt-injections-or-surgery.webp",
+    imageAlt: "Person holding their knee in discomfort while weighing knee pain treatment options",
+    date: "2026-09-21",
+    dateModified: "2026-09-21",
+    category: "Hip & Knee Pain",
+    h1: "Stop Guessing Your Knee Pain Treatment Pathway",
+  },
 ];
