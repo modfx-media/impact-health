@@ -32,7 +32,9 @@ export function coverPrompt(title: string): string {
  * Slugs that already have a committed file at /images/blog/covers/{slug}.png
  * List only. Do not fs.stat public/ — that packs images into the cron bundle.
  */
-export const COMMITTED_COVER_SLUGS: readonly string[] = [];
+export const COMMITTED_COVER_SLUGS: readonly string[] = [
+  "regenerative-medicine-for-chronic-pain-in-westerville-candidates-and-timeline",
+];
 
 export function isRemoteImageSrc(src: string): boolean {
   return /^https?:\/\//i.test(src);
