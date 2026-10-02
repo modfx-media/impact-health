@@ -206,12 +206,26 @@ export function SiteFooter() {
             Wellness | All Rights Reserved.
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/privacy-policy/" className="transition-colors hover:text-white">
+            <Link
+              href="/privacy-policy/"
+              className="transition-colors hover:text-white"
+            >
               Privacy Policy
             </Link>
-            <Link href="/terms-of-use/" className="transition-colors hover:text-white">
+            <Link
+              href="/terms-of-use/"
+              className="transition-colors hover:text-white"
+            >
               Terms of Use
             </Link>
+            <a
+              href="https://modfxmedia.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-white"
+            >
+              POWERED BY MODFXMEDIA
+            </a>
           </div>
         </div>
       </div>
