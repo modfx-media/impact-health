@@ -1,3 +1,4 @@
+import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -6,6 +7,12 @@ const nextConfig: NextConfig = {
   // Next's default routing 308-redirects the trailing-slash URL away from
   // itself, so every self-referencing canonical pointed at a redirecting URL.
   trailingSlash: true,
+  serverExternalPackages: [
+    "pg",
+    "@payloadcms/db-vercel-postgres",
+    "@neondatabase/serverless",
+    "@vercel/postgres",
+  ],
   images: {
     qualities: [75, 90],
     remotePatterns: [
@@ -48,4 +55,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPayload(nextConfig, { devBundleServerPackages: false });
