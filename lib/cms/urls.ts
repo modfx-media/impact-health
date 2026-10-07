@@ -45,7 +45,7 @@ export function normalizeCmsPath(input: string | null | undefined): string | nul
   if (!trimmed || trimmed === "null" || trimmed === "undefined") return null;
   if (trimmed.includes("null") || trimmed.includes("undefined")) return null;
 
-  let value = trimmed.split("?")[0]?.split("#")[0] ?? "";
+  const value = trimmed.split("?")[0]?.split("#")[0] ?? "";
   if (!value) return null;
   if (!value.startsWith("/")) return null;
   if (value === "/") return "/";
