@@ -13,35 +13,47 @@ import { areaLocations } from "@/lib/areas-we-serve/locations";
 import { areaTopics } from "@/lib/areas-we-serve/topics";
 import { staticCmsPaths } from "@/lib/cms/url-manifest";
 import { publicPath } from "@/lib/cms/urls";
-import { cmsSitemapExclusions } from "@/lib/cms/sitemap-exclusions";
+import {
+  cmsSitemapExclusions,
+  cmsSitemapLastModified,
+} from "@/lib/cms/sitemap-exclusions";
 
 const BASE_URL = SITE_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const excluded = await cmsSitemapExclusions();
+  const [excluded, cmsDates] = await Promise.all([
+    cmsSitemapExclusions(),
+    cmsSitemapLastModified(),
+  ]);
 
   const staticEntries: MetadataRoute.Sitemap = staticCmsPaths
     .map((cmsPath) => publicPath(cmsPath))
     .filter((path) => !excluded.has(path))
     .map((path) => ({
       url: `${BASE_URL}${path}`,
-      lastModified: new Date(),
+      lastModified: cmsDates.get(path) ?? new Date(),
     }));
 
   const publishedPosts = await getPublishedBlogPosts().catch(() => []);
   const blogEntries: MetadataRoute.Sitemap = publishedPosts
     .filter((post) => !excluded.has(`/blog/${post.slug}/`))
-    .map((post) => ({
-      url: `${BASE_URL}/blog/${post.slug}/`,
-      lastModified: new Date(post.publishDate),
-    }));
+    .map((post) => {
+      const path = `/blog/${post.slug}/`;
+      return {
+        url: `${BASE_URL}${path}`,
+        lastModified: cmsDates.get(path) ?? new Date(post.publishDate),
+      };
+    });
 
   const staffEntries: MetadataRoute.Sitemap = staffMembers
     .filter((member) => !excluded.has(`/staff/${member.slug}/`))
-    .map((member) => ({
-      url: `${BASE_URL}/staff/${member.slug}/`,
-      lastModified: new Date(),
-    }));
+    .map((member) => {
+      const path = `/staff/${member.slug}/`;
+      return {
+        url: `${BASE_URL}${path}`,
+        lastModified: cmsDates.get(path) ?? new Date(),
+      };
+    });
 
   const areasWeServeEntries: MetadataRoute.Sitemap = AREAS_WE_SERVE_ENABLED
     ? AREAS_WE_SERVE_PILOT_MODE

@@ -1,23 +1,18 @@
 "use client";
 
+import { RefreshRouteOnSave } from "@payloadcms/live-preview-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export function LivePreviewListener() {
   const router = useRouter();
+  const serverURL =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_SERVER_URL ||
+        process.env.NEXT_PUBLIC_SITE_URL ||
+        "http://localhost:3000";
 
-  useEffect(() => {
-    const onMessage = (event: MessageEvent) => {
-      if (
-        event.data?.type === "payload-live-preview" ||
-        event.data?.type === "payload-refresh"
-      ) {
-        router.refresh();
-      }
-    };
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, [router]);
-
-  return null;
+  return (
+    <RefreshRouteOnSave refresh={router.refresh} serverURL={serverURL} />
+  );
 }

@@ -1,5 +1,9 @@
-import { normalizeCmsPath, publicPath } from "@/lib/cms/urls";
+import { getServerURL, normalizeCmsPath, publicPath } from "@/lib/cms/urls";
 
+/**
+ * Admin / live preview URL. Returns null when path is missing so Payload
+ * never opens `/null` or `/blog/null`.
+ */
 export function previewFromPath(
   path: string | null | undefined,
 ): string | null {
@@ -8,7 +12,8 @@ export function previewFromPath(
   const secret = process.env.PREVIEW_SECRET;
   if (!secret) return null;
   const dest = publicPath(cmsPath);
-  return `/next/preview/?path=${encodeURIComponent(dest)}&secret=${encodeURIComponent(secret)}`;
+  const origin = getServerURL();
+  return `${origin}/next/preview/?path=${encodeURIComponent(dest)}&secret=${encodeURIComponent(secret)}`;
 }
 
 export function livePreviewUrl(path: string | null | undefined): string | null {

@@ -6,10 +6,12 @@ import { normalizeCmsPath, publicPath } from "@/lib/cms/urls";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get("secret");
+  const secretParam =
+    request.nextUrl.searchParams.get("secret") ||
+    request.nextUrl.searchParams.get("previewSecret");
   const rawPath = request.nextUrl.searchParams.get("path");
 
-  if (!process.env.PREVIEW_SECRET || secret !== process.env.PREVIEW_SECRET) {
+  if (!process.env.PREVIEW_SECRET || secretParam !== process.env.PREVIEW_SECRET) {
     return new Response("Invalid preview secret", { status: 401 });
   }
 

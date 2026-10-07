@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import { config as loadEnv } from "dotenv";
 import { getPayload } from "payload";
 import config from "../../payload.config";
+
+loadEnv({ path: ".env.local" });
+loadEnv();
 
 type ExportDoc = {
   version: number;
@@ -57,8 +61,17 @@ async function findExisting(
 }
 
 async function main() {
-  const apply =
-    process.env.CMS_IMPORT_APPLY === "1" || process.argv.includes("--apply");
+  if (process.argv.includes("--publish")) {
+    console.error("Refusing to bulk-publish. Import is draft-only.");
+    process.exit(1);
+  }
+
+  const apply = process.argv.includes("--apply");
+  if (apply && process.env.CMS_IMPORT_APPLY !== "1") {
+    console.error("Set CMS_IMPORT_APPLY=1 with --apply to write drafts.");
+    process.exit(1);
+  }
+
   const file =
     process.argv.filter((arg) => arg.endsWith(".json")).at(-1) ||
     "data/content-export.json";
@@ -72,7 +85,7 @@ async function main() {
 
   if (!apply) {
     console.log(
-      `Dry run: ${doc.records.length} records, ${doc.globals.length} globals. Re-run with --apply and CMS_IMPORT_APPLY=1`,
+      `Dry run: ${doc.records.length} records, ${doc.globals.length} globals. Re-run with CMS_IMPORT_APPLY=1 --apply`,
     );
     return;
   }
@@ -83,6 +96,7 @@ async function main() {
 
   const payload = await getPayload({ config });
 
+  // FAQs / related targets before documents that point at them.
   const faqFirst = [...doc.records].sort((a, b) => {
     const aFaq = a.collection === "pages" && a.data.path === "/faq" ? 0 : 1;
     const bFaq = b.collection === "pages" && b.data.path === "/faq" ? 0 : 1;
@@ -90,43 +104,57 @@ async function main() {
   });
 
   for (const record of faqFirst) {
-    const data = skipMissingRefs({
-      ...record.data,
-      _status: "draft",
-    }) as Record<string, unknown>;
+    try {
+      const data = skipMissingRefs({
+        ...record.data,
+        _status: "draft",
+      }) as Record<string, unknown>;
 
-    const existing = (await findExisting(
-      payload,
-      record.collection,
-      data,
-    )) as { id: string | number } | null;
-    if (existing) {
-      await payload.update({
-        collection: record.collection as never,
-        id: existing.id as string | number,
-        data: data as never,
-        draft: true,
-        overrideAccess: true,
-      });
-      console.log("updated", record.collection, data.path || data.slug);
-    } else {
-      await payload.create({
-        collection: record.collection as never,
-        data: data as never,
-        draft: true,
-        overrideAccess: true,
-      });
-      console.log("created", record.collection, data.path || data.slug);
+      const existing = (await findExisting(
+        payload,
+        record.collection,
+        data,
+      )) as { id: string | number } | null;
+      if (existing) {
+        await payload.update({
+          collection: record.collection as never,
+          id: existing.id as string | number,
+          data: data as never,
+          draft: true,
+          overrideAccess: true,
+        });
+        console.log("updated", record.collection, data.path || data.slug);
+      } else {
+        await payload.create({
+          collection: record.collection as never,
+          data: data as never,
+          draft: true,
+          overrideAccess: true,
+        });
+        console.log("created", record.collection, data.path || data.slug);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message.split("\n")[0] : String(error);
+      console.error(
+        `[cms:import] skipped ${record.collection} ${record.data.path || record.data.slug}: ${message}`,
+      );
     }
   }
 
   for (const global of doc.globals) {
-    await payload.updateGlobal({
-      slug: global.slug as never,
-      data: skipMissingRefs(global.data) as never,
-      overrideAccess: true,
-    });
-    console.log("global", global.slug);
+    try {
+      await payload.updateGlobal({
+        slug: global.slug as never,
+        data: skipMissingRefs(global.data) as never,
+        overrideAccess: true,
+      });
+      console.log("global", global.slug);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message.split("\n")[0] : String(error);
+      console.error(`[cms:import] skipped global ${global.slug}: ${message}`);
+    }
   }
 
   await payload.destroy();

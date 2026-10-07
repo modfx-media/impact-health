@@ -16,23 +16,27 @@ import { AreaPages } from "@/collections/AreaPages";
 import { Header } from "@/globals/Header";
 import { Footer } from "@/globals/Footer";
 import { SiteSettings } from "@/globals/SiteSettings";
-import { corsOrigins, getServerURL } from "@/lib/cms/urls";
+import { corsOrigins, getServerURL, normalizeCmsPath, publicPath } from "@/lib/cms/urls";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const disablePush =
-  process.env.VERCEL === "1" || process.env.CMS_IMPORT_APPLY === "1";
+  Boolean(process.env.VERCEL) ||
+  process.env.CMS_IMPORT_APPLY === "1" ||
+  process.env.PAYLOAD_PUSH === "false";
 
 export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
       baseDir: path.resolve(dirname),
+      importMapFile: path.resolve(dirname, "app/(payload)/admin/importMap.js"),
     },
     livePreview: {
       breakpoints: [
         { label: "Mobile", name: "mobile", width: 375, height: 667 },
+        { label: "Tablet", name: "tablet", width: 768, height: 1024 },
         { label: "Desktop", name: "desktop", width: 1440, height: 900 },
       ],
     },
@@ -72,14 +76,15 @@ export default buildConfig({
         return "";
       },
       generateURL: ({ doc }) => {
-        const pathValue =
+        const raw =
           typeof doc?.path === "string"
             ? doc.path
             : typeof doc?.slug === "string"
               ? `/${doc.slug}`
-              : "";
-        if (!pathValue) return "";
-        return `${getServerURL()}${pathValue === "/" ? "/" : `${pathValue}/`}`;
+              : null;
+        const cmsPath = normalizeCmsPath(raw);
+        if (!cmsPath) return "";
+        return `${getServerURL()}${publicPath(cmsPath)}`;
       },
     }),
     searchPlugin({
