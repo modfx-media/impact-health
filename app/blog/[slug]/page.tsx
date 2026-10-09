@@ -49,6 +49,8 @@ import { IsShockwaveTherapyTheMissingStepInYourSportsInjuryRecoveryContent } fro
 import { WhenPersistentHipPainDemandsSpecialistTreatmentContent } from "@/components/blog/content/when-persistent-hip-pain-demands-specialist-treatment";
 import { LaserTherapyOptionsForJointPainInWestervilleContent } from "@/components/blog/content/laser-therapy-options-for-joint-pain-in-westerville";
 import { KneePainCareOptionsPtInjectionsOrSurgeryContent } from "@/components/blog/content/knee-pain-care-options-pt-injections-or-surgery";
+import { RegenerativeMedicineForChronicPainInWestervilleContent } from "@/components/blog/content/regenerative-medicine-for-chronic-pain-in-westerville";
+import { EverydayHabitsThatCanTriggerJointPainReliefContent } from "@/components/blog/content/everyday-habits-that-can-trigger-joint-pain-relief";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -95,6 +97,8 @@ const contentBySlug: Record<string, ReactNode[]> = {
   "when-persistent-hip-pain-demands-specialist-treatment": WhenPersistentHipPainDemandsSpecialistTreatmentContent,
   "laser-therapy-options-for-joint-pain-in-westerville": LaserTherapyOptionsForJointPainInWestervilleContent,
   "knee-pain-care-options-pt-injections-or-surgery": KneePainCareOptionsPtInjectionsOrSurgeryContent,
+  "regenerative-medicine-for-chronic-pain-in-westerville": RegenerativeMedicineForChronicPainInWestervilleContent,
+  "everyday-habits-that-can-trigger-joint-pain-relief": EverydayHabitsThatCanTriggerJointPainReliefContent,
 };
 
 export async function generateStaticParams() {
