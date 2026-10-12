@@ -18,6 +18,8 @@ import {
   cmsSitemapLastModified,
 } from "@/lib/cms/sitemap-exclusions";
 
+
+export const revalidate = 300;
 const BASE_URL = SITE_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

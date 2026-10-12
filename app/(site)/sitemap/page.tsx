@@ -14,6 +14,8 @@ import {
 import { areaLocations } from "@/lib/areas-we-serve/locations";
 import { areaTopics } from "@/lib/areas-we-serve/topics";
 
+
+export const revalidate = 300;
 const fallbackMetadata: Metadata = {
   title: "Sitemap | Impact Health & Wellness in Westerville, OH",
   description:

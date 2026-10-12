@@ -10,7 +10,7 @@ import { getPublishedBlogPosts } from "@/lib/ranked/posts";
 import { BlogCategoryFilter, type BlogListItem } from "@/components/blog/BlogCategoryFilter";
 import { PageLayout } from "@/components/page/PageLayout";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 const fallbackMetadata: Metadata = {
   title: "Blog | Health & Wellness Tips from Impact Health & Wellness",

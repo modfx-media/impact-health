@@ -54,7 +54,7 @@ import { KneePainCareOptionsPtInjectionsOrSurgeryContent } from "@/components/bl
 import { RegenerativeMedicineForChronicPainInWestervilleContent } from "@/components/blog/content/regenerative-medicine-for-chronic-pain-in-westerville";
 import { EverydayHabitsThatCanTriggerJointPainReliefContent } from "@/components/blog/content/everyday-habits-that-can-trigger-joint-pain-relief";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 export const dynamicParams = true;
 
 const contentBySlug: Record<string, ReactNode[]> = {
