@@ -18,6 +18,7 @@ import { Footer } from "@/globals/Footer";
 import { SiteSettings } from "@/globals/SiteSettings";
 import { corsOrigins, getServerURL, normalizeCmsPath, publicPath } from "@/lib/cms/urls";
 
+import { scheduledPublishPlugin } from "./scheduled-publish";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
@@ -60,6 +61,7 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
+    scheduledPublishPlugin(),
     seoPlugin({
       collections: ["pages", "posts", "staff", "area-pages"],
       uploadsCollection: "media",
