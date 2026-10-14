@@ -7,6 +7,7 @@ import {
   categoryForTitle,
 } from "@/lib/blog-posts";
 import { getPublishedBlogPosts } from "@/lib/ranked/posts";
+import { getCmsPublishedPosts } from "@/lib/cms/listed-posts";
 import { BlogCategoryFilter, type BlogListItem } from "@/components/blog/BlogCategoryFilter";
 import { PageLayout } from "@/components/page/PageLayout";
 
@@ -99,7 +100,7 @@ const schema = [
 ];
 
 async function BlogIndexPage() {
-  const posts = await getPublishedBlogPosts();
+  const [posts, cmsPosts] = await Promise.all([getPublishedBlogPosts(), getCmsPublishedPosts()]);
   const categoryBySlug = new Map(blogPosts.map((p) => [p.slug, p.category]));
 
   const localAndRanked: BlogListItem[] = posts.map((post) => ({
@@ -113,7 +114,21 @@ async function BlogIndexPage() {
     href: `/blog/${post.slug}/`,
   }));
 
-  const sorted = [...localAndRanked].sort(
+  const known = new Set(localAndRanked.map((p) => p.slug));
+  const cmsOnly: BlogListItem[] = cmsPosts
+    .filter((p) => !known.has(p.slug))
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      description: p.excerpt,
+      image: p.image,
+      imageAlt: p.imageAlt,
+      date: p.date,
+      category: categoryForTitle(p.title),
+      href: `${p.path.replace(/\/+$/, "")}/`,
+    }));
+
+  const sorted = [...localAndRanked, ...cmsOnly].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
