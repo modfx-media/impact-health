@@ -48,7 +48,10 @@ export interface BlogPost {
 
 /** Formats an ISO `YYYY-MM-DD` date string as e.g. "December 16, 2024". */
 export function formatBlogDate(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {
+  // Accepts `YYYY-MM-DD` or a full ISO timestamp (CMS posts use publishedAt datetimes).
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(date) ? `${date}T00:00:00Z` : date);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
