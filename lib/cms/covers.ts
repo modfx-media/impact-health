@@ -1,10 +1,8 @@
 import pg from "pg";
+import { blogTitleKey } from "@/lib/blog-list";
 import { cmsDatabaseUrl } from "@/lib/cms/env";
+import { slugFromTitle } from "@/lib/ranked/html-to-post";
 import type { BlogPostData } from "@/lib/ranked/types";
-
-function normalizeTitle(title: string): string {
-  return title.replace(/\s+/g, " ").trim().toLowerCase();
-}
 
 function publicCoverUrl(stored: string): string {
   if (/^https?:\/\//i.test(stored)) return stored;
@@ -36,10 +34,12 @@ async function loadCmsCoverMap(): Promise<Map<string, string>> {
 
     const map = new Map<string, string>();
     for (const row of result.rows) {
-      const title = normalizeTitle(row.title || "");
+      const title = blogTitleKey(row.title || "");
       const stored = row.cover_image_url?.trim();
       if (!title || !stored) continue;
-      map.set(title, publicCoverUrl(stored));
+      const url = publicCoverUrl(stored);
+      map.set(title, url);
+      map.set(slugFromTitle(row.title || ""), url);
     }
     return map;
   } catch (err) {
@@ -57,7 +57,8 @@ export async function applyCmsCoverImages<T extends BlogPostData>(
   if (covers.size === 0) return posts;
 
   return posts.map((post) => {
-    const cover = covers.get(normalizeTitle(post.title));
+    const cover =
+      covers.get(blogTitleKey(post.title)) || covers.get(post.slug);
     return cover && cover !== post.coverImage
       ? { ...post, coverImage: cover }
       : post;

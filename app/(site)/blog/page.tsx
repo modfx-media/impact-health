@@ -6,6 +6,7 @@ import {
   blogPosts,
   categoryForTitle,
 } from "@/lib/blog-posts";
+import { dedupeBlogListItems } from "@/lib/blog-list";
 import { getPublishedBlogPosts } from "@/lib/ranked/posts";
 import { getCmsPublishedPosts } from "@/lib/cms/listed-posts";
 import { BlogCategoryFilter, type BlogListItem } from "@/components/blog/BlogCategoryFilter";
@@ -128,9 +129,10 @@ async function BlogIndexPage() {
       href: `${p.path.replace(/\/+$/, "")}/`,
     }));
 
-  const sorted = [...localAndRanked, ...cmsOnly].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  const sorted = dedupeBlogListItems(
+    [...localAndRanked, ...cmsOnly],
+    known,
+  ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <PageLayout
