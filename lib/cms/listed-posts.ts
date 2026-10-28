@@ -1,5 +1,6 @@
 ﻿import { getPayload } from "payload";
 import config from "@payload-config";
+import { REMOVED_BLOG_SLUGS } from "@/lib/blog-posts";
 import { cmsDatabaseUrl } from "@/lib/cms/env";
 import { withCMS } from "@/lib/cms/safe";
 
@@ -52,6 +53,6 @@ export async function getCmsPublishedPosts(): Promise<CmsListedPost[]> {
         date: String(doc.publishDate ?? doc.createdAt ?? ""),
         path: String(doc.path || `/blog/${slug}`),
       };
-    }).filter((p) => p.slug);
+    }).filter((p) => p.slug && !REMOVED_BLOG_SLUGS.has(p.slug));
   }, []);
 }

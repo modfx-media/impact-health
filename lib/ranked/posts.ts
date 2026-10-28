@@ -14,6 +14,7 @@ import {
   slugFromTitle,
 } from "./html-to-post";
 import { applyCmsCoverImages } from "@/lib/cms/covers";
+import { REMOVED_BLOG_SLUGS } from "@/lib/blog-posts";
 import { getLocalBlogPosts } from "./local-posts";
 import type {
   BlogPostData,
@@ -178,7 +179,8 @@ export async function getPublishedBlogPosts(): Promise<BlogPostData[]> {
   const taken = new Set(local.map((p) => p.slug));
   const merged = [...local, ...ranked.filter((p) => !taken.has(p.slug))];
   const uniqued = ensureUniquePublishDates(ensureUniqueCoverImages(merged));
-  return applyCmsCoverImages(uniqued);
+  const visible = uniqued.filter((post) => !REMOVED_BLOG_SLUGS.has(post.slug));
+  return applyCmsCoverImages(visible);
 }
 
 export async function getPublishedBlogSlugs(): Promise<string[]> {

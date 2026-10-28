@@ -58,6 +58,11 @@ const nextConfig: NextConfig = {
       { source: "/wound-care/", destination: "/", permanent: true },
       { source: "/medical-infusion-therapy/", destination: "/", permanent: true },
       { source: "/staff/melinda-everman-moore/", destination: "/", permanent: true },
+      {
+        source: "/blog/everyday-habits-that-can-trigger-joint-pain-relief/",
+        destination: "/blog/",
+        permanent: true,
+      },
       { source: "/staff/tara-allen/", destination: "/", permanent: true },
     ];
   },

@@ -539,17 +539,9 @@ export const blogPosts: BlogPost[] = [
     category: "Regenerative Medicine",
     h1: "Find Lasting Relief From Chronic Pain Without Surgery",
   },
-  {
-    slug: "everyday-habits-that-can-trigger-joint-pain-relief",
-    title: "Everyday Habits That Can Trigger Joint Pain Relief",
-    description:
-      "Learn which routines may aggravate aches and how to find joint pain relief in Westerville, OH with practical tips for lasting comfort and mobility",
-    image: "/images/blog/everyday-habits-that-can-trigger-joint-pain-relief.jpeg",
-    imageAlt:
-      "Everyday habits that can quietly worsen joint pain, from sitting and screens to footwear and daily tasks",
-    date: "2026-10-05",
-    dateModified: "2026-10-05",
-    category: "Arthritis & Joint Pain",
-    h1: "Everyday Choices That Make Joint Pain Worse",
-  },
 ];
+
+/** Removed from the public site; listings and routes must skip these slugs. */
+export const REMOVED_BLOG_SLUGS = new Set([
+  "everyday-habits-that-can-trigger-joint-pain-relief",
+]);

@@ -3,7 +3,7 @@ import { CMSRoute } from "@/components/cms/CMSRoute";
 import { cmsMetadata } from "@/lib/cms/metadata";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { blogPosts, formatBlogDate } from "@/lib/blog-posts";
+import { blogPosts, formatBlogDate, REMOVED_BLOG_SLUGS } from "@/lib/blog-posts";
 import { blogPostSchemas } from "@/lib/blog-schema";
 import { getPublishedBlogPost, getPublishedBlogSlugs } from "@/lib/ranked/posts";
 import { rankedPostSchema } from "@/lib/ranked/schema";
@@ -52,7 +52,6 @@ import { WhenPersistentHipPainDemandsSpecialistTreatmentContent } from "@/compon
 import { LaserTherapyOptionsForJointPainInWestervilleContent } from "@/components/blog/content/laser-therapy-options-for-joint-pain-in-westerville";
 import { KneePainCareOptionsPtInjectionsOrSurgeryContent } from "@/components/blog/content/knee-pain-care-options-pt-injections-or-surgery";
 import { RegenerativeMedicineForChronicPainInWestervilleContent } from "@/components/blog/content/regenerative-medicine-for-chronic-pain-in-westerville";
-import { EverydayHabitsThatCanTriggerJointPainReliefContent } from "@/components/blog/content/everyday-habits-that-can-trigger-joint-pain-relief";
 
 export const revalidate = 300;
 export const dynamicParams = true;
@@ -100,7 +99,6 @@ const contentBySlug: Record<string, ReactNode[]> = {
   "laser-therapy-options-for-joint-pain-in-westerville": LaserTherapyOptionsForJointPainInWestervilleContent,
   "knee-pain-care-options-pt-injections-or-surgery": KneePainCareOptionsPtInjectionsOrSurgeryContent,
   "regenerative-medicine-for-chronic-pain-in-westerville": RegenerativeMedicineForChronicPainInWestervilleContent,
-  "everyday-habits-that-can-trigger-joint-pain-relief": EverydayHabitsThatCanTriggerJointPainReliefContent,
 };
 
 export async function generateStaticParams() {
@@ -208,6 +206,7 @@ export default async function CmsWrappedBlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (REMOVED_BLOG_SLUGS.has(slug)) notFound();
   return (
     <CMSRoute path={`/blog/${slug}`}>
       <BlogPostPage params={params} />
