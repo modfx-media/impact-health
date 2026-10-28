@@ -129,7 +129,7 @@ async function TriggerPointInjectionsPage() {
       showTestimonials
       image={{
         src: "/images/services/trigger-point-injections.jpg",
-        alt: "trigger point injections at Impact Health & Wellness",
+        alt: "Provider treating muscle trigger points in the neck and shoulder at Impact Health & Wellness",
       }}
       afterContent={
         <>
