@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { draftMode } from "next/headers";
 import { normalizeCmsPath } from "@/lib/cms/urls";
+import { cmsDatabaseUrl } from "@/lib/cms/env";
 import { withCMS } from "@/lib/cms/safe";
 
 export type RoutedCollection = "pages" | "posts" | "staff" | "area-pages";
@@ -45,7 +46,7 @@ export async function queryRoutedContentByPath(
   return withCMS(async () => {
     const cmsPath = normalizeCmsPath(path);
     if (!cmsPath) return null;
-    if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URL) return null;
+    if (!process.env.PAYLOAD_SECRET || !cmsDatabaseUrl()) return null;
 
     const payload = await getPayload({ config });
     const { isEnabled } = await draftMode();

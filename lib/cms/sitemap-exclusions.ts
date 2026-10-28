@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { cmsDatabaseUrl } from "@/lib/cms/env";
 import { withCMS } from "@/lib/cms/safe";
 import type { RoutedCollection } from "@/lib/cms/query";
 import { publicPath } from "@/lib/cms/urls";
@@ -26,7 +27,7 @@ function docPublicPath(doc: {
 
 export async function cmsSitemapExclusions(): Promise<Set<string>> {
   return withCMS(async () => {
-    if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URL) {
+    if (!process.env.PAYLOAD_SECRET || !cmsDatabaseUrl()) {
       return new Set<string>();
     }
 
@@ -61,7 +62,7 @@ export async function cmsSitemapExclusions(): Promise<Set<string>> {
 /** Prefer CMS `sourceUpdatedAt` / `updatedAt` for sitemap lastModified. */
 export async function cmsSitemapLastModified(): Promise<Map<string, Date>> {
   return withCMS(async () => {
-    if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URL) {
+    if (!process.env.PAYLOAD_SECRET || !cmsDatabaseUrl()) {
       return new Map<string, Date>();
     }
 

@@ -22,6 +22,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "impacthealthoh.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.impacthealthoh.com",
+      },
+      {
+        protocol: "https",
         hostname: "*.googleusercontent.com",
       },
       {

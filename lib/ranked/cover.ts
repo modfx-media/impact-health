@@ -185,12 +185,17 @@ function imageModels(): string[] {
   return [...new Set(models)];
 }
 
+function blobToken(): string | undefined {
+  return process.env.BLOB_READ_WRITE_TOKEN;
+}
+
 async function existingBlobUrl(contentId: string): Promise<string | null> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.VERCEL) return null;
+  const token = blobToken();
+  if (!token && !process.env.VERCEL) return null;
 
   for (const pathname of [coverPngPath(contentId), coverJpgPath(contentId)]) {
     try {
-      const meta = await head(pathname);
+      const meta = await head(pathname, token ? { token } : undefined);
       if (meta.url) return meta.url;
     } catch (err) {
       if (!(err instanceof BlobNotFoundError)) return null;
@@ -204,13 +209,15 @@ async function persistBuffer(
   bytes: Buffer,
   contentType: string,
 ): Promise<string | null> {
-  if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.VERCEL) return null;
+  const token = blobToken();
+  if (!token && !process.env.VERCEL) return null;
 
   const blob = await put(pathname, bytes, {
     access: "public",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType,
+    ...(token ? { token } : {}),
   });
   return blob.url;
 }

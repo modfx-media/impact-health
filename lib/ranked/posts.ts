@@ -12,8 +12,8 @@ import {
   isRankedPostLive,
   publishDateFromRanked,
   slugFromTitle,
-  spreadRankedPublishDates,
 } from "./html-to-post";
+import { applyCmsCoverImages } from "@/lib/cms/covers";
 import { getLocalBlogPosts } from "./local-posts";
 import type {
   BlogPostData,
@@ -149,9 +149,7 @@ export async function getLiveRankedBlogPosts(
       taken.add(slug);
     }
 
-    return ensureUniquePublishDates(
-      spreadRankedPublishDates(ensureUniqueCoverImages(posts)),
-    );
+    return ensureUniquePublishDates(ensureUniqueCoverImages(posts));
   } catch (err) {
     console.error("[ranked] failed to load content calendar", err);
     return [];
@@ -179,7 +177,8 @@ export async function getPublishedBlogPosts(): Promise<BlogPostData[]> {
   const ranked = await getLiveRankedBlogPosts();
   const taken = new Set(local.map((p) => p.slug));
   const merged = [...local, ...ranked.filter((p) => !taken.has(p.slug))];
-  return ensureUniquePublishDates(ensureUniqueCoverImages(merged));
+  const uniqued = ensureUniquePublishDates(ensureUniqueCoverImages(merged));
+  return applyCmsCoverImages(uniqued);
 }
 
 export async function getPublishedBlogSlugs(): Promise<string[]> {

@@ -17,6 +17,7 @@ import { Header } from "@/globals/Header";
 import { Footer } from "@/globals/Footer";
 import { SiteSettings } from "@/globals/SiteSettings";
 import { corsOrigins, getServerURL, normalizeCmsPath, publicPath } from "@/lib/cms/urls";
+import { cmsDatabaseUrl } from "@/lib/cms/env";
 
 import { scheduledPublishPlugin } from "./scheduled-publish";
 const filename = fileURLToPath(import.meta.url);
@@ -54,7 +55,7 @@ export default buildConfig({
   },
   db: vercelPostgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || "",
+      connectionString: cmsDatabaseUrl(),
     },
     forceUseVercelPostgres: true,
     push: !disablePush,

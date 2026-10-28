@@ -1,5 +1,6 @@
 ﻿import { getPayload } from "payload";
 import config from "@payload-config";
+import { cmsDatabaseUrl } from "@/lib/cms/env";
 import { withCMS } from "@/lib/cms/safe";
 
 export type CmsListedPost = {
@@ -26,7 +27,7 @@ function mediaUrl(value: unknown): string {
  * listing alongside the legacy and Ranked posts.
  */
 export async function getCmsPublishedPosts(): Promise<CmsListedPost[]> {
-  if (!process.env.PAYLOAD_SECRET || !process.env.DATABASE_URL) return [];
+  if (!process.env.PAYLOAD_SECRET || !cmsDatabaseUrl()) return [];
   return withCMS(async () => {
     const payload = await getPayload({ config });
     const result = await payload.find({
