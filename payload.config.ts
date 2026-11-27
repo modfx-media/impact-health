@@ -29,6 +29,9 @@ const disablePush =
   process.env.CMS_IMPORT_APPLY === "1" ||
   process.env.PAYLOAD_PUSH === "false";
 
+const databaseUrl = cmsDatabaseUrl();
+const localDatabase = /localhost|127\.0\.0\.1/.test(databaseUrl);
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -56,9 +59,10 @@ export default buildConfig({
   },
   db: vercelPostgresAdapter({
     pool: {
-      connectionString: cmsDatabaseUrl(),
+      connectionString: databaseUrl,
     },
-    forceUseVercelPostgres: true,
+    // Neon hosts need the websocket driver. A throwaway local Postgres does not.
+    forceUseVercelPostgres: !localDatabase,
     push: !disablePush,
     migrationDir: path.resolve(dirname, "migrations"),
     // Preview builds also set NODE_ENV=production. Only the production
