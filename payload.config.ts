@@ -20,6 +20,7 @@ import { corsOrigins, getServerURL, normalizeCmsPath, publicPath } from "@/lib/c
 import { cmsDatabaseUrl } from "@/lib/cms/env";
 
 import { scheduledPublishPlugin } from "./scheduled-publish";
+import { migrations } from "./migrations";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
@@ -27,6 +28,9 @@ const disablePush =
   Boolean(process.env.VERCEL) ||
   process.env.CMS_IMPORT_APPLY === "1" ||
   process.env.PAYLOAD_PUSH === "false";
+
+const databaseUrl = cmsDatabaseUrl();
+const localDatabase = /localhost|127\.0\.0\.1/.test(databaseUrl);
 
 export default buildConfig({
   admin: {
@@ -55,10 +59,15 @@ export default buildConfig({
   },
   db: vercelPostgresAdapter({
     pool: {
-      connectionString: cmsDatabaseUrl(),
+      connectionString: databaseUrl,
     },
-    forceUseVercelPostgres: true,
+    // Neon hosts need the websocket driver. A throwaway local Postgres does not.
+    forceUseVercelPostgres: !localDatabase,
     push: !disablePush,
+    migrationDir: path.resolve(dirname, "migrations"),
+    // Preview builds also set NODE_ENV=production. Only the production
+    // deployment applies migrations, via prodMigrations during that build.
+    prodMigrations: process.env.VERCEL_ENV === "production" ? migrations : undefined,
   }),
   sharp,
   plugins: [
@@ -66,6 +75,7 @@ export default buildConfig({
     seoPlugin({
       collections: ["pages", "posts", "staff", "area-pages"],
       uploadsCollection: "media",
+      tabbedUI: true,
       generateTitle: ({ doc }) =>
         typeof doc?.title === "string"
           ? doc.title
@@ -89,6 +99,34 @@ export default buildConfig({
         if (!cmsPath) return "";
         return `${getServerURL()}${publicPath(cmsPath)}`;
       },
+      fields: ({ defaultFields }) => [
+        ...defaultFields,
+        {
+          name: "canonicalUrl",
+          type: "text",
+          admin: {
+            description: "Absolute URL or public path. Leave empty to keep the page default.",
+          },
+        },
+        {
+          name: "noIndex",
+          type: "checkbox",
+          label: "No index",
+          defaultValue: false,
+        },
+        {
+          name: "noFollow",
+          type: "checkbox",
+          label: "No follow",
+          defaultValue: false,
+        },
+        {
+          name: "excludeFromSitemap",
+          type: "checkbox",
+          label: "Exclude from sitemap",
+          defaultValue: false,
+        },
+      ],
     }),
     searchPlugin({
       collections: ["pages", "posts"],

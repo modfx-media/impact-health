@@ -277,6 +277,13 @@ export interface Page {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Absolute URL or public path. Leave empty to keep the page default.
+     */
+    canonicalUrl?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    excludeFromSitemap?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -328,6 +335,13 @@ export interface Post {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Absolute URL or public path. Leave empty to keep the page default.
+     */
+    canonicalUrl?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    excludeFromSitemap?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -366,6 +380,13 @@ export interface Staff {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Absolute URL or public path. Leave empty to keep the page default.
+     */
+    canonicalUrl?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    excludeFromSitemap?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -460,6 +481,13 @@ export interface AreaPage {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+    /**
+     * Absolute URL or public path. Leave empty to keep the page default.
+     */
+    canonicalUrl?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    excludeFromSitemap?: boolean | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -791,6 +819,10 @@ export interface PagesSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+        noFollow?: T;
+        excludeFromSitemap?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -826,6 +858,10 @@ export interface PostsSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+        noFollow?: T;
+        excludeFromSitemap?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -862,6 +898,10 @@ export interface StaffSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+        noFollow?: T;
+        excludeFromSitemap?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -944,6 +984,10 @@ export interface AreaPagesSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        canonicalUrl?: T;
+        noIndex?: T;
+        noFollow?: T;
+        excludeFromSitemap?: T;
       };
   updatedAt?: T;
   createdAt?: T;
