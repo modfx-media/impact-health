@@ -101,14 +101,14 @@ function copyFlags(table: string, version: boolean): string {
   return `DO $$\nBEGIN\n${textSql}\n${boolSql}\nEND $$;`;
 }
 
-const upStatements = tables.flatMap(({ name, versions }) => [
+export const upStatements = tables.flatMap(({ name, versions }) => [
   ...addColumns(name, false),
   ...addColumns(versions, true),
   copyFlags(name, false),
   copyFlags(versions, true),
 ]);
 
-const downStatements = tables.flatMap(({ name, versions }) =>
+export const downStatements = tables.flatMap(({ name, versions }) =>
   newFlagColumns.flatMap((column) => [
     `ALTER TABLE "${name}" DROP COLUMN IF EXISTS "${column}"`,
     `ALTER TABLE "${versions}" DROP COLUMN IF EXISTS "version_${column}"`,

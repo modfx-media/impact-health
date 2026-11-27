@@ -2,30 +2,20 @@ import type { ReactNode } from "react";
 import { draftMode } from "next/headers";
 import {
   queryRoutedContentByPath,
-  type RoutedContent,
 } from "@/lib/cms/query";
+import {
+  hasDesignedRoute,
+  selectCmsRouteView,
+} from "@/lib/cms/route-view";
 import { LivePreviewListener } from "@/components/cms/LivePreviewListener";
 import { RenderRoutedContent } from "@/components/cms/RenderRoutedContent";
 
-/** Only overlay designed UI when CMS has real body content (or draft preview). */
-function hasRenderableContent(routed: RoutedContent): boolean {
-  const { collection, doc } = routed;
-
-  if (collection === "posts") {
-    return Boolean(doc.content || doc.bodyHtml);
-  }
-
-  if (collection === "staff") {
-    return (
-      Array.isArray(doc.bio) &&
-      (doc.bio as { paragraph?: string }[]).some((row) => Boolean(row?.paragraph))
-    );
-  }
-
-  const layout = Array.isArray(doc.layout) ? doc.layout : [];
-  return layout.length > 0;
-}
-
+/**
+ * Designed UI stays as children. CMS supplies meta through generateMetadata
+ * and does not replace a route that already has a designed component, even
+ * when the published doc has a body. CMS blocks render only for a URL with
+ * no designed component and a layout that actually has blocks.
+ */
 export async function CMSRoute({
   path,
   children,
@@ -38,18 +28,36 @@ export async function CMSRoute({
     draftMode(),
   ]);
 
-  if (!routed) return children;
+  const status = routed?.doc._status;
+  const view = selectCmsRouteView({
+    routed: routed
+      ? {
+          collection: routed.collection,
+          doc: {
+            _status: typeof status === "string" ? status : null,
+            layout: routed.doc.layout,
+          },
+        }
+      : null,
+    draft: draft.isEnabled,
+    hasDesignedComponent: hasDesignedRoute(children),
+  });
 
-  // Sparse published drafts must not blank the designed page. Live preview
-  // still shows the CMS shell so editors can iterate.
-  if (!hasRenderableContent(routed) && !draft.isEnabled) {
-    return children;
+  const body =
+    view === "cms" && routed ? (
+      <RenderRoutedContent doc={routed.doc} collection={routed.collection} />
+    ) : (
+      children
+    );
+
+  if (draft.isEnabled && routed) {
+    return (
+      <>
+        <LivePreviewListener />
+        {body}
+      </>
+    );
   }
 
-  return (
-    <>
-      {draft.isEnabled && <LivePreviewListener />}
-      <RenderRoutedContent doc={routed.doc} collection={routed.collection} />
-    </>
-  );
+  return body;
 }
