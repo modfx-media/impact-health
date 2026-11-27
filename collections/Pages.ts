@@ -4,6 +4,7 @@ import { normalizeCmsPath } from "@/lib/cms/urls";
 import {
   draftVersions,
   importFields,
+  legacySeoFields,
   previewAdmin,
   uniqueNullableText,
 } from "@/collections/shared";
@@ -56,10 +57,7 @@ export const Pages: CollectionConfig = {
       type: "blocks",
       blocks: layoutBlocks,
     },
-    { name: "canonicalUrl", type: "text" },
-    { name: "noIndex", type: "checkbox", defaultValue: false },
-    { name: "noFollow", type: "checkbox", defaultValue: false },
-    { name: "excludeFromSitemap", type: "checkbox", defaultValue: false },
+    ...legacySeoFields,
     ...importFields,
   ],
 };

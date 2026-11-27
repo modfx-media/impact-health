@@ -1,4 +1,4 @@
-import { getPayload } from "payload";
+import { getPayload, type Where } from "payload";
 import config from "@payload-config";
 import { cmsDatabaseUrl } from "@/lib/cms/env";
 import { withCMS } from "@/lib/cms/safe";
@@ -25,6 +25,22 @@ function docPublicPath(doc: {
   return pathValue ? publicPath(pathValue) : null;
 }
 
+const legacyExclusionWhere: Where = {
+  or: [
+    { noIndex: { equals: true } },
+    { excludeFromSitemap: { equals: true } },
+  ],
+};
+
+const exclusionWhere: Where = {
+  or: [
+    { noIndex: { equals: true } },
+    { excludeFromSitemap: { equals: true } },
+    { "meta.noIndex": { equals: true } },
+    { "meta.excludeFromSitemap": { equals: true } },
+  ],
+};
+
 export async function cmsSitemapExclusions(): Promise<Set<string>> {
   return withCMS(async () => {
     if (!process.env.PAYLOAD_SECRET || !cmsDatabaseUrl()) {
@@ -35,19 +51,29 @@ export async function cmsSitemapExclusions(): Promise<Set<string>> {
     const excluded = new Set<string>();
 
     for (const collection of collections) {
-      const result = await payload.find({
-        collection,
-        where: {
-          or: [
-            { noIndex: { equals: true } },
-            { excludeFromSitemap: { equals: true } },
-          ],
-        },
-        limit: 1000,
-        depth: 0,
-        draft: false,
-        pagination: false,
-      });
+      let result;
+      try {
+        result = await payload.find({
+          collection,
+          where: exclusionWhere,
+          limit: 1000,
+          depth: 0,
+          draft: false,
+          pagination: false,
+        });
+      } catch (error) {
+        // Meta columns are added by the production migration. Until then,
+        // keep honoring the legacy top-level flags.
+        console.error("[cms] sitemap meta exclusions", collection, error);
+        result = await payload.find({
+          collection,
+          where: legacyExclusionWhere,
+          limit: 1000,
+          depth: 0,
+          draft: false,
+          pagination: false,
+        });
+      }
 
       for (const doc of result.docs) {
         const pathValue = docPublicPath(doc);

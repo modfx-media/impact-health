@@ -45,6 +45,32 @@ export function previewAdmin(
   };
 }
 
+/**
+ * Earlier rows stored these on the document. The SEO tab (`meta`) is the
+ * editor surface; these stay so existing values and queries keep working.
+ */
+export const legacySeoFields: Field[] = [
+  { name: "canonicalUrl", type: "text", admin: { hidden: true } },
+  {
+    name: "noIndex",
+    type: "checkbox",
+    defaultValue: false,
+    admin: { hidden: true },
+  },
+  {
+    name: "noFollow",
+    type: "checkbox",
+    defaultValue: false,
+    admin: { hidden: true },
+  },
+  {
+    name: "excludeFromSitemap",
+    type: "checkbox",
+    defaultValue: false,
+    admin: { hidden: true },
+  },
+];
+
 export const draftVersions = {
   drafts: {
     schedulePublish: true,
