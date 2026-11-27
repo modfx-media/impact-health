@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { hasCmsBlocks, selectCmsRouteView } from "./route-view.ts";
+import { hasCmsBlocks, selectCmsRouteView } from "./route-view";
 
 const blocks = [{ blockType: "richText", html: "<p>Published body</p>" }];
 
